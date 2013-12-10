@@ -1,6 +1,6 @@
 # Arrow Flight Path
 
-Arrow Flight Path is an open-source (CC BY-NC-SA 3.0) modification for [Minecraft](http://www.minecraft.net/) initially created for the [ModJam 3](http://mcp.ocean-labs.de/modjam/), suggested by @bspkrs.
+Arrow Flight Path is an open-source (CC BY-NC-SA 3.0) modification for [Minecraft](http://www.minecraft.net/) initially created for the [ModJam 3](http://mcp.ocean-labs.de/modjam/), suggested by [bspkrs](http://github.com/bspkrs).
 
 ## Getting started
 
