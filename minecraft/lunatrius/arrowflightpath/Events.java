@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -12,24 +14,31 @@ import java.util.List;
 
 public class Events {
 	private final Minecraft minecraft = Minecraft.getMinecraft();
-	private List<Vector3f> points = new ArrayList<Vector3f>();
+	public List<Vector3f> points = new ArrayList<Vector3f>();
+	public boolean isUsingBow = false;
 
 	@ForgeSubscribe
 	public void onRender(RenderWorldLastEvent event) {
-		EntityPlayerSP player = this.minecraft.thePlayer;
-		if (player != null) {
-			double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks;
-			double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks;
-			double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks;
+		if (this.isUsingBow) {
+			EntityPlayerSP player = this.minecraft.thePlayer;
+			if (player != null) {
+				double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks;
+				double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks;
+				double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks;
 
-			render(x, y, z);
+				render(x, y, z);
+			}
 		}
 	}
 
-	public Events() {
-		for (int y = 0; y < 255; y++) {
-			this.points.add(new Vector3f(0, y, 0));
-		}
+	@ForgeSubscribe
+	public void onArrowNock(ArrowNockEvent event) {
+		this.isUsingBow = true;
+	}
+
+	@ForgeSubscribe
+	public void onArrowLoose(ArrowLooseEvent event) {
+		this.isUsingBow = false;
 	}
 
 	private void render(double offsetX, double offsetY, double offsetZ) {
