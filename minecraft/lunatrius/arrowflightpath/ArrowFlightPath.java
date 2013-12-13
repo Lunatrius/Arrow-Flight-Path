@@ -7,6 +7,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -37,11 +39,37 @@ public class ArrowFlightPath {
 	}
 
 	public boolean onTick(TickType tick, boolean start) {
+		if (start) {
+			return true;
+		}
+
 		if (this.events.isUsingBow) {
 			this.events.points.clear();
 
-			for (int y = 0; y < 255; y++) {
-				this.events.points.add(new Vector3f((float) this.minecraft.thePlayer.posX + 2, y, (float) this.minecraft.thePlayer.posZ + 2));
+			ItemStack currentEquippedItem = this.minecraft.thePlayer.getCurrentEquippedItem();
+			if (currentEquippedItem != null) {
+				int charge = currentEquippedItem.getItem().getMaxItemUseDuration(currentEquippedItem) - this.minecraft.thePlayer.getItemInUseCount();
+
+				float chargeTime = charge / 20.0f;
+				chargeTime = (chargeTime * chargeTime + chargeTime * 2.0f) / 3.0f;
+
+				if (chargeTime < 0.1f) {
+					return true;
+				}
+
+				if (chargeTime > 1.0f) {
+					chargeTime = 1.0f;
+				}
+
+				EntityArrow entityArrow = new EntityArrow(this.minecraft.thePlayer.worldObj, this.minecraft.thePlayer, chargeTime * 2.0f);
+
+				for (int i = 0; i < 10000; i++) {
+					this.events.points.add(new Vector3f((float) entityArrow.posX, (float) entityArrow.posY, (float) entityArrow.posZ));
+					entityArrow.onUpdate();
+				}
+
+				System.out.println(entityArrow + "; " + entityArrow.onGround);
+				System.out.println(this.events.points.size());
 			}
 		}
 

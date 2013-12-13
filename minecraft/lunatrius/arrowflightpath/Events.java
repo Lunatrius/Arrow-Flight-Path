@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Events {
 	private final Minecraft minecraft = Minecraft.getMinecraft();
+	public Vector3f playerPosition = new Vector3f();
 	public List<Vector3f> points = new ArrayList<Vector3f>();
 	public boolean isUsingBow = false;
 
@@ -22,11 +23,11 @@ public class Events {
 		if (this.isUsingBow) {
 			EntityPlayerSP player = this.minecraft.thePlayer;
 			if (player != null) {
-				double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks;
-				double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks;
-				double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks;
+				this.playerPosition.x = (float) (player.lastTickPosX + (player.posX - player.lastTickPosX) * event.partialTicks);
+				this.playerPosition.y = (float) (player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks);
+				this.playerPosition.z = (float) (player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks);
 
-				render(x, y, z);
+				render();
 			}
 		}
 	}
@@ -41,9 +42,9 @@ public class Events {
 		this.isUsingBow = false;
 	}
 
-	private void render(double offsetX, double offsetY, double offsetZ) {
+	private void render() {
 		GL11.glPushMatrix();
-		GL11.glTranslated(-offsetX, -offsetY, -offsetZ);
+		GL11.glTranslatef(-this.playerPosition.x, -this.playerPosition.y, -this.playerPosition.z);
 
 		GL11.glColor3f(0.0f, 1.0f, 0.0f);
 
@@ -52,7 +53,8 @@ public class Events {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_BLEND);
 
-		GL11.glPointSize(5);
+
+		GL11.glPointSize(2.0f);
 
 		GL11.glBegin(GL11.GL_POINTS);
 		for (Vector3f point : this.points) {
