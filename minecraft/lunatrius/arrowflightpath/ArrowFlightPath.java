@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,9 +47,10 @@ public class ArrowFlightPath {
 		if (this.events.isUsingBow) {
 			this.events.points.clear();
 
-			ItemStack currentEquippedItem = this.minecraft.thePlayer.getCurrentEquippedItem();
+			EntityClientPlayerMP player = this.minecraft.thePlayer;
+			ItemStack currentEquippedItem = player.getCurrentEquippedItem();
 			if (currentEquippedItem != null) {
-				int charge = currentEquippedItem.getItem().getMaxItemUseDuration(currentEquippedItem) - this.minecraft.thePlayer.getItemInUseCount();
+				int charge = currentEquippedItem.getItem().getMaxItemUseDuration(currentEquippedItem) - player.getItemInUseCount();
 
 				float chargeTime = charge / 20.0f;
 				chargeTime = (chargeTime * chargeTime + chargeTime * 2.0f) / 3.0f;
@@ -61,14 +63,14 @@ public class ArrowFlightPath {
 					chargeTime = 1.0f;
 				}
 
-				EntityArrow entityArrow = new EntityArrow(this.minecraft.thePlayer.worldObj, this.minecraft.thePlayer, chargeTime * 2.0f);
+				EntityArrow entityArrow = new EntityArrow(player.worldObj, player, chargeTime * 2.0f);
 
-				for (int i = 0; i < 10000; i++) {
+				for (int i = 0; i < 10000 && !entityArrow.isDead; i++) {
 					this.events.points.add(new Vector3f((float) entityArrow.posX, (float) entityArrow.posY, (float) entityArrow.posZ));
 					entityArrow.onUpdate();
 				}
 
-				System.out.println(entityArrow + "; " + entityArrow.onGround);
+				System.out.println(entityArrow + "; " + entityArrow.onGround + "; " + entityArrow.isDead);
 				System.out.println(this.events.points.size());
 			}
 		}
