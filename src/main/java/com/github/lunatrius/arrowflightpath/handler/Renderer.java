@@ -24,14 +24,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Renderer {
+    public static final double DELTA = 0.005;
+
     private final Minecraft minecraft = Minecraft.getMinecraft();
+    private final Field fieldArrowRand;
+    private final Field fieldArrowX;
+    private final Field fieldArrowY;
+    private final Field fieldArrowZ;
     private Vector3f playerPosition = new Vector3f();
     private List<Vector3f> points = new ArrayList<Vector3f>();
     private boolean isUsingBow = false;
-    private final Field fieldArrowRand;
+    private int targetX = -1;
+    private int targetY = -1;
+    private int targetZ = -1;
 
     public Renderer() {
         this.fieldArrowRand = ReflectionHelper.findField(Entity.class, "field_70146_Z", "rand");
+        this.fieldArrowX = ReflectionHelper.findField(EntityArrow.class, "field_145791_d", "xTile");
+        this.fieldArrowY = ReflectionHelper.findField(EntityArrow.class, "field_145791_e", "yTile");
+        this.fieldArrowZ = ReflectionHelper.findField(EntityArrow.class, "field_145791_f", "zTile");
     }
 
     @SubscribeEvent
@@ -85,9 +96,7 @@ public class Renderer {
             try {
                 this.fieldArrowRand.set(arrow, NotRandom.INSTANCE);
             } catch (final Exception e) {
-                Reference.logger.error("Could not set rand field!", new ReflectionHelper.UnableToAccessFieldException(new String[] {
-                        "field_70146_Z", "rand"
-                }, e));
+                Reference.logger.error("Could not set rand field!");
             }
 
             arrow.canBePickedUp = 0;
@@ -104,6 +113,16 @@ public class Renderer {
                 this.points.add(new Vector3f((float) arrow.posX, (float) arrow.posY, (float) arrow.posZ));
                 arrow.onUpdate();
             }
+
+            try {
+                this.targetX = (Integer) this.fieldArrowX.get(arrow);
+                this.targetY = (Integer) this.fieldArrowY.get(arrow);
+                this.targetZ = (Integer) this.fieldArrowZ.get(arrow);
+            } catch (final Exception e) {
+                this.targetX = -1;
+                this.targetY = -1;
+                this.targetZ = -1;
+            }
         }
 
         return true;
@@ -117,7 +136,6 @@ public class Renderer {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GlStateManager.translate(-this.playerPosition.x, -this.playerPosition.y, -this.playerPosition.z);
-        GlStateManager.color(1.0f, 0.0f, 1.0f);
 
         final Tessellator tessellator = Tessellator.getInstance();
         final WorldRenderer worldRenderer = tessellator.getWorldRenderer();
@@ -125,9 +143,58 @@ public class Renderer {
         GL11.glPointSize(2.0f);
 
         worldRenderer.startDrawing(GL11.GL_POINTS);
+        worldRenderer.setColorOpaque_I(0xFF00FF);
         for (final Vector3f point : this.points) {
             worldRenderer.addVertex(point.x, point.y, point.z);
         }
+        tessellator.draw();
+
+        final double x0 = this.targetX - DELTA;
+        final double y0 = this.targetY - DELTA;
+        final double z0 = this.targetZ - DELTA;
+        final double x1 = this.targetX + 1 + DELTA;
+        final double y1 = this.targetY + 1 + DELTA;
+        final double z1 = this.targetZ + 1 + DELTA;
+
+        worldRenderer.startDrawing(GL11.GL_QUADS);
+        worldRenderer.setColorRGBA_I(0x00FF00, 0x7F);
+
+        // down
+        worldRenderer.addVertex(x1, y0, z0);
+        worldRenderer.addVertex(x1, y0, z1);
+        worldRenderer.addVertex(x0, y0, z1);
+        worldRenderer.addVertex(x0, y0, z0);
+
+        // up
+        worldRenderer.addVertex(x1, y1, z0);
+        worldRenderer.addVertex(x0, y1, z0);
+        worldRenderer.addVertex(x0, y1, z1);
+        worldRenderer.addVertex(x1, y1, z1);
+
+        // north
+        worldRenderer.addVertex(x1, y0, z0);
+        worldRenderer.addVertex(x0, y0, z0);
+        worldRenderer.addVertex(x0, y1, z0);
+        worldRenderer.addVertex(x1, y1, z0);
+
+        // south
+        worldRenderer.addVertex(x0, y0, z1);
+        worldRenderer.addVertex(x1, y0, z1);
+        worldRenderer.addVertex(x1, y1, z1);
+        worldRenderer.addVertex(x0, y1, z1);
+
+        // west
+        worldRenderer.addVertex(x0, y0, z0);
+        worldRenderer.addVertex(x0, y0, z1);
+        worldRenderer.addVertex(x0, y1, z1);
+        worldRenderer.addVertex(x0, y1, z0);
+
+        // east
+        worldRenderer.addVertex(x1, y0, z1);
+        worldRenderer.addVertex(x1, y0, z0);
+        worldRenderer.addVertex(x1, y1, z0);
+        worldRenderer.addVertex(x1, y1, z1);
+
         tessellator.draw();
 
         GlStateManager.disableBlend();
