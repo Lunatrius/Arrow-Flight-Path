@@ -28,7 +28,7 @@ public class Renderer {
     private Vector3f playerPosition = new Vector3f();
     private List<Vector3f> points = new ArrayList<Vector3f>();
     private boolean isUsingBow = false;
-    public final Field fieldArrowRand;
+    private final Field fieldArrowRand;
 
     public Renderer() {
         this.fieldArrowRand = ReflectionHelper.findField(Entity.class, "field_70146_Z", "rand");
@@ -43,7 +43,7 @@ public class Renderer {
                 this.playerPosition.y = (float) (player.lastTickPosY + (player.posY - player.lastTickPosY) * event.partialTicks);
                 this.playerPosition.z = (float) (player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.partialTicks);
 
-                if (compile(player)) {
+                if (!compile(player)) {
                     return;
                 }
 
@@ -73,7 +73,7 @@ public class Renderer {
             chargeTime = (chargeTime * chargeTime + chargeTime * 2.0f) / 3.0f;
 
             if (chargeTime < 0.1f) {
-                return true;
+                return false;
             }
 
             if (chargeTime > 1.0f) {
@@ -106,7 +106,7 @@ public class Renderer {
             }
         }
 
-        return false;
+        return true;
     }
 
     private void render() {
