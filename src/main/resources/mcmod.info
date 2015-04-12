@@ -1,0 +1,25 @@
+{
+	"modListVersion": 2,
+	"modList": [
+		{
+			"modid": "ArrowFlightPath",
+			"name": "Arrow Flight Path",
+			"description": "Visualize an arrow's path before shooting it out.",
+			"mcversion": "${mcversion}",
+			"version": "${version}",
+			"authorList": [
+				"Lunatrius"
+			],
+			"credits": "bspkrs (idea)",
+			"dependants": [  ],
+			"dependencies": [ "Forge@[${minforgeversion},)" ],
+			"parent": "",
+			"requiredMods": [ "Forge@[${minforgeversion},)" ],
+			"logoFile": "",
+			"screenshots": [  ],
+			"updateUrl": "http://mc.lunatri.us/",
+			"url": "http://mc.lunatri.us/",
+			"useDependencyInformation": true
+		}
+	]
+}
