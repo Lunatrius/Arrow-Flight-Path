@@ -1,17 +1,17 @@
-## Welcome to Danger Zone!
+## Welcome to Arrow Flight Path!
 ### Compiling
 [Setup Java](#setup-java)
 
 [Setup Git](#setup-git)
 
-[Setup Danger Zone](#setup-danger-zone)
+[Setup Arrow Flight Path](#setup-arrow-flight-path)
 
-[Compile Danger Zone](#compile-danger-zone)
+[Compile Arrow Flight Path](#compile-arrow-flight-path)
 
 [Updating Your Repository](#updating-your-repository)
 
 #### Setup Java
-The Java JDK is used to compile Danger Zone.
+The Java JDK is used to compile Arrow Flight Path.
 
 1. Download and install the Java JDK.
     * [Windows/Mac download link](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html). Scroll down, accept the `Oracle Binary Code License Agreement for Java SE`, and download it (if you have a 64-bit OS, please download the 64-bit version).
@@ -32,32 +32,32 @@ The Java JDK is used to compile Danger Zone.
 3. Open up your command line and run `javac`. If it spews out a bunch of possible options and the usage, then you're good to go. If not try the steps again.
 
 #### Setup Git
-Git is used to clone Danger Zone and update your local copy.
+Git is used to clone Arrow Flight Path and update your local copy.
 
 1. Download and install Git [here](http://git-scm.com/download/).
 2. *Optional* Download and install a Git GUI client, such as Github for Windows/Mac, SmartGitHg, TortoiseGit, etc. A nice list is available [here](http://git-scm.com/downloads/guis).
 
-#### Setup Danger Zone
+#### Setup Arrow Flight Path
 This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
-2. Navigate to a place where you want to download Danger Zone's source (eg `C:\Development\Github\Minecraft\`) by executing `cd [folder location]`. This location is known as `mcdev` from now on.
-3. Execute `git clone git@github.com:Lunatrius/Danger-Zone.git`. This will download Danger Zone's source into `mcdev`.
+2. Navigate to a place where you want to download Arrow Flight Path's source (eg `C:\Development\Github\Minecraft\`) by executing `cd [folder location]`. This location is known as `mcdev` from now on.
+3. Execute `git clone git@github.com:Lunatrius/Arrow-Flight-Path.git`. This will download Arrow Flight Path's source into `mcdev`.
 4. Right now, you should have a directory that looks something like:
 
 ***
     mcdev
-    \-DangerZone
-        \-DangerZone's files (should have build.gradle)
+    \-ArrowFlightPack
+        \-ArrowFlightPack's files (should have build.gradle)
 ***
 
-#### Compile Danger Zone
-1. Execute `gradlew setupDevWorkspace`. This sets up Forge and downloads the necessary libraries to build Danger Zone. This might take some time, be patient.
+#### Compile Arrow Flight Path
+1. Execute `gradlew setupDevWorkspace`. This sets up Forge and downloads the necessary libraries to build Arrow Flight Path. This might take some time, be patient.
     * You will generally only have to do this once until the Forge version in `build.properties` changes.
 2. Execute `gradlew build`. If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes. This should be relatively quick.
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
-3. Go to `mcdev\DangerZone\build\libs`.
-    * You should see a `.jar` file named `DangerZone-#.#.#-#.#.#.#-universal.jar`.
+3. Go to `mcdev\ArrowFlightPack\build\libs`.
+    * You should see a `.jar` file named `ArrowFlightPack-#.#.#-#.#.#.#-universal.jar`.
 4. Copy the jar into your Minecraft mods folder, and you are done!
 
 #### Updating Your Repository
