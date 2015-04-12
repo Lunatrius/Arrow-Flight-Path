@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,11 @@ public class Renderer {
     private Vector3f playerPosition = new Vector3f();
     private List<Vector3f> points = new ArrayList<Vector3f>();
     private boolean isUsingBow = false;
+    public final Field fieldArrowRand;
+
+    public Renderer() {
+        this.fieldArrowRand = ReflectionHelper.findField(Entity.class, "field_70146_Z", "rand");
+    }
 
     @SubscribeEvent
     public void onRender(final RenderWorldLastEvent event) {
@@ -76,7 +82,13 @@ public class Renderer {
 
 
             final EntityArrow arrow = new EntityArrow(player.worldObj, player, chargeTime * 2.0f);
-            ReflectionHelper.setPrivateValue(Entity.class, arrow, NotRandom.INSTANCE, "field_70146_Z", "rand");
+            try {
+                this.fieldArrowRand.set(arrow, NotRandom.INSTANCE);
+            } catch (final Exception e) {
+                Reference.logger.error("Could not set rand field!", new ReflectionHelper.UnableToAccessFieldException(new String[] {
+                        "field_70146_Z", "rand"
+                }, e));
+            }
 
             arrow.canBePickedUp = 0;
             arrow.worldObj = player.worldObj;
